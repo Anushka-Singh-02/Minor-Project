@@ -174,9 +174,5 @@ def health_check():
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))  # Use PORT from environment or default to 5000
-<<<<<<< HEAD
-    app.run(debug=True, host='0.0.0.0', port=port)
-=======
     app.run(debug=True, host='0.0.0.0', port=port)
    
->>>>>>> 9a354cf1b4154ba47f66732e901a4c69025fea34
