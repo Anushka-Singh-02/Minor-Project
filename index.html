@@ -180,7 +180,7 @@
       formData.append("file", file);
 
       try {
-        const response = await fetch("https://minor-project-backend-m6s8.onrender.com/predict", {
+        const response = await fetch("http://localhost:5000/predict", {
           method: "POST",
           body: formData,
         });
@@ -215,7 +215,7 @@
       healthResultDiv.textContent = "🔍 Checking server health...";
 
       try {
-        const response = await fetch("https://minor-project-backend-m6s8.onrender.com/health");
+        const response = await fetch("http://localhost:5000/health");
         console.log(response);
         if (!response.ok) {
           healthResultDiv.textContent = `❌ Server health check failed: ${response.statusText}`;
