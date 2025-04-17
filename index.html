@@ -142,6 +142,8 @@
         <button type="submit">Predict</button>
       </form>
       <div id="prediction-result"></div>
+      <button id="health-check-button" style="margin-top: 20px;">Check Server Health</button>
+      <div id="health-check-result" style="margin-top: 10px; font-weight: bold;"></div>
     </div>
   </section>
 
@@ -161,16 +163,70 @@
       button.classList.add('active');
     }
 
-    // Optional: Simulate prediction (Replace this with your actual Flask call)
-    document.getElementById("upload-form").addEventListener("submit", function (e) {
+    document.getElementById("upload-form").addEventListener("submit", async function (e) {
       e.preventDefault();
       const resultDiv = document.getElementById("prediction-result");
       resultDiv.textContent = "🔍 Predicting... Please wait...";
 
-      // Simulate a delay and fake result
-      setTimeout(() => {
-        resultDiv.textContent = "✅ Prediction: Newcastle Disease";
-      }, 2000);
+      const formData = new FormData();
+      const fileInput = this.querySelector('input[type="file"]');
+      const file = fileInput.files[0];
+
+      if (!file) {
+        resultDiv.textContent = "❌ Please select a file before submitting.";
+        return;
+      }
+
+      formData.append("file", file);
+
+      try {
+        const response = await fetch("http://127.0.0.1:5000/predict", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          resultDiv.textContent = `❌ Error: ${errorData.error || "Unknown error occurred"}`;
+          return;
+        }
+
+        const data = await response.json();
+        resultDiv.innerHTML = `
+          ✅ Prediction: <strong>${data.class}</strong><br>
+          Confidence: <strong>${data.confidence.toFixed(2)}%</strong><br>
+          <details>
+            <summary>Detailed Results</summary>
+            <ul>
+              ${Object.entries(data.detailed_results)
+                .map(([key, value]) => `<li>${key}: ${value.toFixed(2)}%</li>`)
+                .join("")}
+            </ul>
+          </details>
+        `;
+      } catch (error) {
+        resultDiv.textContent = `❌ Error: ${error.message}`;
+      }
+    });
+
+    // Add event listener for health check button
+    document.getElementById("health-check-button").addEventListener("click", async function () {
+      const healthResultDiv = document.getElementById("health-check-result");
+      healthResultDiv.textContent = "🔍 Checking server health...";
+
+      try {
+        const response = await fetch("http://127.0.0.1:5000/health");
+        console.log(response);
+        if (!response.ok) {
+          healthResultDiv.textContent = `❌ Server health check failed: ${response.statusText}`;
+          return;
+        }
+
+        const data = await response.json();
+        healthResultDiv.textContent = `✅ Server is healthy: ${data.status}`;
+      } catch (error) {
+        healthResultDiv.textContent = `❌ Error: ${error.message}`;
+      }
     });
   </script>
 </body>

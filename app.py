@@ -5,13 +5,22 @@ import numpy as np
 from PIL import Image
 import io
 import traceback
+from tensorflow.keras.models import load_model
+from tensorflow.keras.preprocessing import image
+import matplotlib.pyplot as plt
+from flask_cors import CORS  # Import CORS
 
-# Import your model here
-# For example:
-# from tensorflow.keras.models import load_model
-# model = load_model('path_to_your_model.h5')
+# Load the model
+MODEL_PATH = "poultry_disease_model.h5"
+try:
+    model = load_model(MODEL_PATH)
+    print("Model loaded successfully!")
+except Exception as e:
+    print(f"Error loading model: {e}")
+    model = None
 
-app = Flask(__name__)
+app = Flask(__name__)  
+CORS(app)  # Enable CORS for all routes
 
 # Configuration
 UPLOAD_FOLDER = 'uploads'
@@ -30,50 +39,59 @@ def preprocess_image(image_path):
     Preprocess the image according to your model's requirements
     Modify this function based on your model's preprocessing needs
     """
-    # Example preprocessing for a typical CNN model
-    img = Image.open(image_path)
-    img = img.resize((224, 224))  # Resize to your model's input size
-    img_array = np.array(img) / 255.0  # Normalize
-    
-    # Add batch dimension if needed
-    img_array = np.expand_dims(img_array, axis=0)
-    
+    return load_and_preprocess_image(image_path)
+
+def load_and_preprocess_image(img_path, target_size=(224, 224)):
+    """
+    Load and preprocess an image for prediction
+    """
+    img = image.load_img(img_path, target_size=target_size)
+    img_array = image.img_to_array(img) / 255.0  # Normalize
+    img_array = np.expand_dims(img_array, axis=0)  # Add batch dimension
     return img_array
 
 def predict(image_array):
     """
-    Make predictions using your loaded model
-    Replace this with your actual prediction code
+    Predict poultry disease from image using the trained model
     """
-    # Example prediction function
-    # predictions = model.predict(image_array)
-    # result = interpret_predictions(predictions)
-    
-    # Placeholder for demonstration
-    result = {
-        "class": "example_class",
-        "confidence": 0.95
+    if model is None:
+        return {"error": "Model not loaded"}
+
+    categories = ['coccidiosis', 'healthy', 'ncd', 'salmonella']
+    predictions = model.predict(image_array)
+    predicted_class_index = np.argmax(predictions[0])
+    predicted_class = categories[predicted_class_index]
+    confidence = predictions[0][predicted_class_index] * 100
+
+    # Return prediction results
+    return {
+        "class": predicted_class,
+        "confidence": confidence,
+        "detailed_results": {categories[i]: float(predictions[0][i] * 100) for i in range(len(categories))}
     }
-    
-    return result
 
 @app.route('/predict', methods=['POST'])
 def predict_api():
+    print(request)  # Log the entire request object
     try:
         # Check if image file is included in request
-        if 'file' not in request.files:
-            return jsonify({"error": "No file part"}), 400
         
-        file = request.files['file']
+        
+        file = request.files.get('file')
+        
+        # Log file details
+        print(f"Received file: {file.filename}")
         
         # Check if user submitted an empty form
         if file.filename == '':
+            print("No selected file")  # Log empty filename
             return jsonify({"error": "No selected file"}), 400
         
         if file and allowed_file(file.filename):
             # Save the file
             filename = secure_filename(file.filename)
             filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            print(f"Saving file to: {filepath}")  # Log file save path
             file.save(filepath)
             
             # Preprocess the image
@@ -84,12 +102,15 @@ def predict_api():
             
             # Clean up - remove uploaded file (optional)
             os.remove(filepath)
+            print(f"File {filepath} removed after processing")  # Log file removal
             
             return jsonify(result)
         else:
+            print(f"File type not allowed: {file.filename}")  # Log invalid file type
             return jsonify({"error": f"File type not allowed. Please upload {', '.join(ALLOWED_EXTENSIONS)}"}), 400
     
     except Exception as e:
+        print(f"Error occurred: {e}")  # Log exception details
         return jsonify({"error": str(e), "traceback": traceback.format_exc()}), 500
 
 # Alternative method using in-memory processing (no file saving)
@@ -119,6 +140,30 @@ def predict_memory_api():
             return jsonify(result)
         else:
             return jsonify({"error": f"File type not allowed. Please upload {', '.join(ALLOWED_EXTENSIONS)}"}), 400
+    
+    except Exception as e:
+        return jsonify({"error": str(e), "traceback": traceback.format_exc()}), 500
+
+@app.route('/test-predict', methods=['GET'])
+def test_predict_api():
+    """
+    Test the prediction API using a predefined test image
+    """
+    try:
+        # Path to the test image (use absolute path)
+        test_image_path = os.path.join(os.path.dirname(__file__), "test_image.jpg")
+        
+        # Check if the test image exists
+        if not os.path.exists(test_image_path):
+            return jsonify({"error": f"Test image not found at {test_image_path}"}), 404
+        
+        # Preprocess the image
+        processed_image = preprocess_image(test_image_path)
+        
+        # Get prediction
+        result = predict(processed_image)
+        
+        return jsonify(result)
     
     except Exception as e:
         return jsonify({"error": str(e), "traceback": traceback.format_exc()}), 500
