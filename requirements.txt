@@ -6,7 +6,7 @@ Werkzeug==2.3.7
 flask-cors
 tensorflow
 matplotlib
-
+setuptools
 # Add your ML framework dependencies here
 # For example:
 # tensorflow==2.13.0
