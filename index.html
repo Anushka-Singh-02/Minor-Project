@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chicken AI - Poultry Disease Detection</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+
+    header {
+      background: linear-gradient(to right, #43cea2, #185a9d);
+      padding: 20px 0;
+      color: white;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 2.5em;
+      animation: fadeIn 1s ease-in;
+    }
+
+    nav {
+      display: flex;
+      justify-content: center;
+      background: #fff;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    nav button {
+      background: none;
+      border: none;
+      padding: 15px 20px;
+      font-size: 1em;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    nav button:hover,
+    nav button.active {
+      background: #e0f7f1;
+    }
+
+    section {
+      display: none;
+      padding: 30px;
+      max-width: 900px;
+      margin: auto;
+      animation: fadeIn 0.8s ease-in;
+    }
+
+    section.active {
+      display: block;
+    }
+
+    .features li {
+      margin-bottom: 10px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 0.9em;
+      background: #eee;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>🐔 Chicken AI</h1>
+    <p>Poultry Disease Detection App</p>
+  </header>
+
+  <nav>
+    <button class="tab-button active" onclick="showTab('about')">About</button>
+    <button class="tab-button" onclick="showTab('features')">Features</button>
+    <button class="tab-button" onclick="showTab('download')">Download</button>
+    <button class="tab-button" onclick="showTab('contact')">Contact</button>
+  </nav>
+
+  <section id="about" class="active">
+    <h2>About Chicken AI</h2>
+    <p>
+      Chicken AI is a web-based and mobile-friendly application designed to detect poultry diseases from images of chicken droppings. It leverages deep learning and image classification to assist farmers in identifying diseases early.
+    </p>
+  </section>
+
+  <section id="features">
+    <h2>Key Features</h2>
+    <ul class="features">
+      <li>📷 Upload or capture chicken feces images</li>
+      <li>🧠 AI-based disease prediction (Salmonella, Coccidiosis, Newcastle, etc.)</li>
+      <li>📡 Works offline after setup</li>
+      <li>📊 Achieved 98% accuracy using DenseNet on 6000+ images</li>
+      <li>⚙️ Clean, responsive UI for mobile and desktop</li>
+    </ul>
+  </section>
+
+  <section id="download">
+    <h2>Download & Usage</h2>
+    <p>
+      <strong>Download APK:</strong> <a href="#">Click here to download</a>
+    </p>
+    <p><strong>How to use:</strong></p>
+    <ol>
+      <li>Open the app or web portal.</li>
+      <li>Upload or take a photo of the chicken droppings.</li>
+      <li>Get instant prediction and recommendations.</li>
+    </ol>
+  </section>
+
+  <section id="contact">
+    <h2>Contact Us</h2>
+    <p>Email: your-email@example.com</p>
+    <p>Twitter: <a href="https://twitter.com/yourhandle">@yourhandle</a></p>
+  </section>
+
+  <footer>
+    &copy; 2025 Chicken AI - Built with ❤️ for poultry farmers
+  </footer>
+
+  <script>
+    function showTab(tabId) {
+      const sections = document.querySelectorAll('section');
+      const buttons = document.querySelectorAll('.tab-button');
+
+      sections.forEach(section => {
+        section.classList.remove('active');
+      });
+
+      buttons.forEach(button => {
+        button.classList.remove('active');
+      });
+
+      document.getElementById(tabId).classList.add('active');
+      event.target.classList.add('active');
+    }
+  </script>
+</body>
+
+</html>
