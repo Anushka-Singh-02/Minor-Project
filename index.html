@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chicken AI - Poultry Disease Detection</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+
+    header {
+      background: linear-gradient(to right, #43cea2, #185a9d);
+      padding: 20px 0;
+      color: white;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 2.5em;
+      animation: fadeIn 1s ease-in;
+    }
+
+    nav {
+      display: flex;
+      justify-content: center;
+      background: #fff;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    nav button {
+      background: none;
+      border: none;
+      padding: 15px 20px;
+      font-size: 1em;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    nav button:hover,
+    nav button.active {
+      background: #e0f7f1;
+    }
+
+    section {
+      display: none;
+      padding: 30px;
+      max-width: 900px;
+      margin: auto;
+      animation: fadeIn 0.8s ease-in;
+    }
+
+    section.active {
+      display: block;
+    }
+
+    .features li {
+      margin-bottom: 10px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 0.9em;
+      background: #eee;
+    }
+
+    .upload-box {
+      background: #fff;
+      border: 2px dashed #ccc;
+      padding: 40px;
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .upload-box input {
+      margin-top: 10px;
+    }
+
+    #prediction-result {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>🐔 Chicken AI</h1>
+    <p>Poultry Disease Detection App</p>
+  </header>
+
+  <nav>
+    <button class="tab-button active" onclick="showTab(this, 'about')">About</button>
+    <button class="tab-button" onclick="showTab(this, 'features')">Features</button>
+    <button class="tab-button" onclick="showTab(this, 'predict')">Predict</button>
+  </nav>
+
+  <section id="about" class="active">
+    <h2>About Chicken AI</h2>
+    <p>
+      Chicken AI is a web-based and mobile-friendly application designed to detect poultry diseases from images of chicken droppings. It leverages deep learning and image classification to assist farmers in identifying diseases early.
+    </p>
+  </section>
+
+  <section id="features">
+    <h2>Key Features</h2>
+    <ul class="features">
+      <li>📷 Upload real chicken droppings images directly from your phone or camera</li>
+      <li>🧠 Deep learning model trained on 6000+ real-world poultry images</li>
+      <li>💡 Supports blurry and low-light images using intelligent enhancement filters</li>
+      <li>📊 High-accuracy prediction (98%) for diseases like Salmonella, Coccidiosis, and Newcastle</li>
+    </ul>
+  </section>
+
+  <section id="predict">
+    <h2>Make a Prediction</h2>
+    <div class="upload-box">
+      <p>Select an image of chicken droppings to predict the disease:</p>
+      <form id="upload-form" enctype="multipart/form-data">
+        <input type="file" name="image" accept="image/*" required />
+        <br />
+        <button type="submit">Predict</button>
+      </form>
+      <div id="prediction-result"></div>
+    </div>
+  </section>
+
+  <footer>
+    &copy; 2025 Chicken AI - Built with ❤️ for poultry farmers
+  </footer>
+
+  <script>
+    function showTab(button, tabId) {
+      const sections = document.querySelectorAll('section');
+      const buttons = document.querySelectorAll('.tab-button');
+
+      sections.forEach(section => section.classList.remove('active'));
+      buttons.forEach(btn => btn.classList.remove('active'));
+
+      document.getElementById(tabId).classList.add('active');
+      button.classList.add('active');
+    }
+
+    // Optional: Simulate prediction (Replace this with your actual Flask call)
+    document.getElementById("upload-form").addEventListener("submit", function (e) {
+      e.preventDefault();
+      const resultDiv = document.getElementById("prediction-result");
+      resultDiv.textContent = "🔍 Predicting... Please wait...";
+
+      // Simulate a delay and fake result
+      setTimeout(() => {
+        resultDiv.textContent = "✅ Prediction: Newcastle Disease";
+      }, 2000);
+    });
+  </script>
+</body>
+
+</html>
